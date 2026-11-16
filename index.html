@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f7f8f6" />
+  <title>허가를 잇다 — 인허가 전문가 찾기</title>
+  <style>
+    :root {
+      --ink: #172a27;
+      --muted: #71807a;
+      --green: #16725e;
+      --green-dark: #105b4b;
+      --mint: #e8f3ee;
+      --line: #e7ebe7;
+      --paper: #ffffff;
+      --bg: #f7f8f6;
+      --orange: #e7a25b;
+      --shadow: 0 14px 40px rgba(27, 55, 45, .07);
+      font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Noto Sans KR", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--bg); }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+
+    .topbar {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 19px;
+      font-weight: 850;
+      letter-spacing: -.7px;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      color: white;
+      background: var(--green);
+      font-size: 18px;
+    }
+
+    .nav { display: flex; align-items: center; gap: 28px; color: #53625c; font-size: 14px; }
+    .nav a:hover { color: var(--green); }
+    .nav-cta {
+      border: 0;
+      border-radius: 10px;
+      padding: 11px 16px;
+      color: white;
+      background: var(--green);
+      font-weight: 700;
+    }
+    .nav-cta:hover, .primary-btn:hover { background: var(--green-dark); }
+
+    .hero {
+      max-width: 1180px;
+      margin: 16px auto 0;
+      padding: 58px 24px 42px;
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 36px;
+      align-items: center;
+      min-height: 340px;
+      overflow: hidden;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 85% 20%, rgba(221, 239, 229, .9), transparent 31%),
+        linear-gradient(115deg, #edf5ef, #f8f8f1 72%);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+
+    .eyebrow-dot { width: 7px; height: 7px; border-radius: 50%; background: #e4a35c; }
+    h1 { margin: 16px 0 13px; font-size: clamp(32px, 4vw, 48px); line-height: 1.2; letter-spacing: -2px; }
+    h1 span { color: var(--green); }
+    .hero-copy { margin: 0; color: #66766f; line-height: 1.75; font-size: 16px; }
+    .hero-stats { display: flex; gap: 25px; margin-top: 27px; }
+    .stat strong { display: block; font-size: 19px; }
+    .stat span { color: var(--muted); font-size: 12px; }
+
+    .hero-art {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 220px;
+    }
+
+    .art-card {
+      width: min(100%, 300px);
+      padding: 23px;
+      border: 1px solid rgba(255,255,255,.9);
+      border-radius: 20px;
+      background: rgba(255,255,255,.78);
+      box-shadow: 0 22px 60px rgba(42, 84, 66, .12);
+      transform: rotate(3deg);
+    }
+
+    .art-top { display: flex; justify-content: space-between; align-items: center; }
+    .art-icon {
+      display: grid;
+      place-items: center;
+      width: 43px;
+      height: 43px;
+      border-radius: 14px;
+      background: var(--mint);
+      font-size: 21px;
+    }
+    .art-check { color: var(--green); font-size: 20px; font-weight: 900; }
+    .art-title { margin: 18px 0 7px; font-weight: 800; }
+    .art-sub { color: var(--muted); font-size: 12px; }
+    .art-progress { height: 7px; margin: 18px 0 8px; overflow: hidden; border-radius: 10px; background: #edf0ec; }
+    .art-progress i { display: block; width: 72%; height: 100%; border-radius: inherit; background: #55a68b; }
+    .art-caption { color: #819087; font-size: 11px; }
+    .floating-note {
+      position: absolute;
+      right: 2%;
+      bottom: 4px;
+      padding: 12px 15px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: white;
+      box-shadow: var(--shadow);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    main { max-width: 1180px; margin: 0 auto; padding: 52px 24px 80px; }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+    .section-heading h2 { margin: 0 0 7px; font-size: 25px; letter-spacing: -.9px; }
+    .section-heading p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    .search-panel {
+      display: grid;
+      grid-template-columns: 1fr 190px 130px;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: var(--paper);
+      box-shadow: 0 5px 20px rgba(30, 55, 45, .03);
+    }
+
+    .search-field, .select-field {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      padding: 0 13px;
+      color: #87938d;
+    }
+
+    .search-field input, .select-field select {
+      width: 100%;
+      height: 44px;
+      border: 0;
+      outline: 0;
+      color: var(--ink);
+      background: transparent;
+    }
+
+    .select-field { border-left: 1px solid var(--line); }
+    .select-field select { cursor: pointer; }
+    .primary-btn {
+      border: 0;
+      border-radius: 10px;
+      color: white;
+      background: var(--green);
+      font-weight: 750;
+    }
+
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 21px 0 25px; }
+    .filter-chip {
+      padding: 9px 14px;
+      border: 1px solid #e3e8e3;
+      border-radius: 999px;
+      color: #66746d;
+      background: white;
+      font-size: 13px;
+      transition: .18s ease;
+    }
+    .filter-chip:hover { border-color: #9dc8b6; color: var(--green); }
+    .filter-chip.active { border-color: var(--green); color: white; background: var(--green); }
+
+    .results-bar { display: flex; align-items: center; justify-content: space-between; margin: 26px 0 15px; }
+    .results-count { font-size: 14px; font-weight: 750; }
+    .results-count span { color: var(--green); }
+    .sort-select { border: 0; outline: 0; color: #66746d; background: transparent; font-size: 13px; }
+
+    .expert-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 17px; }
+    .expert-card {
+      padding: 21px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: white;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .expert-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+    .card-top { display: flex; justify-content: space-between; align-items: start; }
+    .profile { display: flex; align-items: center; gap: 12px; }
+    .avatar {
+      display: grid;
+      place-items: center;
+      width: 54px;
+      height: 54px;
+      flex: 0 0 auto;
+      border-radius: 17px;
+      color: #315d4d;
+      background: #e4f0e9;
+      font-size: 20px;
+      font-weight: 800;
+    }
+    .avatar.violet { color: #645284; background: #eee9f5; }
+    .avatar.yellow { color: #8c6632; background: #f8efdc; }
+    .avatar.blue { color: #456b80; background: #e6f0f4; }
+    .avatar.rose { color: #8c5361; background: #f6e8eb; }
+    .avatar.teal { color: #3e706d; background: #e2f0ed; }
+    .name { font-weight: 800; font-size: 16px; }
+    .role { margin-top: 4px; color: var(--muted); font-size: 12px; }
+    .bookmark {
+      padding: 3px 5px;
+      border: 0;
+      color: #a4aea8;
+      background: transparent;
+      font-size: 21px;
+      line-height: 1;
+    }
+    .bookmark.saved { color: #e58b71; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 17px 0 13px; }
+    .tag { padding: 5px 8px; border-radius: 6px; color: #537365; background: #eef5f0; font-size: 11px; }
+    .bio { min-height: 42px; margin: 0; color: #697770; font-size: 13px; line-height: 1.65; }
+    .card-meta { display: flex; gap: 14px; margin: 16px 0; color: #68776f; font-size: 12px; }
+    .rating { color: #b2782d; font-weight: 750; }
+    .card-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid #eef0ed; }
+    .price { font-size: 12px; color: var(--muted); }
+    .price strong { display: block; margin-top: 3px; color: var(--ink); font-size: 15px; }
+    .detail-btn {
+      padding: 9px 12px;
+      border: 1px solid #dce8df;
+      border-radius: 9px;
+      color: var(--green);
+      background: white;
+      font-size: 12px;
+      font-weight: 750;
+    }
+    .detail-btn:hover { background: var(--mint); }
+
+    .empty-state { display: none; grid-column: 1 / -1; padding: 55px 20px; border: 1px dashed #d6dfd8; border-radius: 16px; color: var(--muted); text-align: center; }
+    .empty-state strong { display: block; margin-bottom: 8px; color: var(--ink); font-size: 16px; }
+    .trust-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 48px; }
+    .trust-item { padding: 19px; border-radius: 14px; background: #eef3ef; }
+    .trust-item strong { display: block; margin-bottom: 6px; font-size: 14px; }
+    .trust-item span { color: var(--muted); font-size: 12px; line-height: 1.6; }
+
+    footer { padding: 25px 24px; border-top: 1px solid var(--line); color: #849089; text-align: center; font-size: 12px; }
+
+    .modal-backdrop {
+      position: fixed;
+      z-index: 10;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(18, 35, 29, .45);
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      width: min(100%, 470px);
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 25px;
+      border-radius: 19px;
+      background: white;
+      box-shadow: 0 24px 80px rgba(0,0,0,.2);
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px; }
+    .modal-header h3 { margin: 0 0 6px; font-size: 21px; }
+    .modal-header p { margin: 0; color: var(--muted); font-size: 13px; }
+    .close-btn { border: 0; color: #819087; background: transparent; font-size: 24px; }
+    .form-field { margin-bottom: 14px; }
+    .form-field label { display: block; margin-bottom: 7px; font-size: 12px; font-weight: 750; }
+    .form-field input, .form-field textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e1e7e2;
+      border-radius: 9px;
+      outline: 0;
+    }
+    .form-field input:focus, .form-field textarea:focus { border-color: #79b39d; }
+    .form-field textarea { min-height: 90px; resize: vertical; }
+    .modal-submit { width: 100%; height: 46px; margin-top: 3px; }
+    .form-success { display: none; padding: 13px; border-radius: 9px; color: var(--green-dark); background: var(--mint); font-size: 13px; line-height: 1.6; }
+
+    @media (max-width: 800px) {
+      .hero { grid-template-columns: 1fr .65fr; }
+      .expert-grid { grid-template-columns: repeat(2, 1fr); }
+      .nav { gap: 15px; }
+    }
+    @media (max-width: 600px) {
+      .topbar { height: 62px; padding: 0 17px; }
+      .nav a:not(.nav-cta) { display: none; }
+      .nav-cta { padding: 9px 12px; font-size: 12px; }
+      .hero { margin: 8px 12px 0; padding: 36px 22px; grid-template-columns: 1fr; min-height: 0; border-radius: 19px; }
+      .hero-art { display: none; }
+      .hero-stats { gap: 18px; }
+      main { padding: 40px 16px 58px; }
+      .section-heading { align-items: start; }
+      .section-heading h2 { font-size: 22px; }
+      .search-panel { grid-template-columns: 1fr 1fr; gap: 5px; }
+      .search-field { grid-column: 1 / -1; border-bottom: 1px solid var(--line); }
+      .select-field { border-left: 0; }
+      .search-panel .primary-btn { min-height: 43px; }
+      .expert-grid { grid-template-columns: 1fr; }
+      .trust-strip { grid-template-columns: 1fr; margin-top: 35px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="허가를 잇다 홈">
+      <span class="brand-mark">허</span>
+      허가를 잇다
+    </a>
+    <nav class="nav" aria-label="주 메뉴">
+      <a href="#experts">전문가 찾기</a>
+      <a href="#guide">이용 안내</a>
+      <button class="nav-cta" type="button" onclick="openModal('전문가 상담')">상담 문의하기</button>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div>
+      <div class="eyebrow"><span class="eyebrow-dot"></span> 복잡한 인허가, 전문가와 함께</div>
+      <h1>막막한 인허가,<br /><span>길을 아는 사람</span>과 함께</h1>
+      <p class="hero-copy">
+        건축부터 영업·환경 인허가까지.<br />
+        내 상황에 맞는 전문가를 찾아보세요.
+      </p>
+      <div class="hero-stats">
+        <div class="stat"><strong>분야별</strong><span>맞춤 전문가 검색</span></div>
+        <div class="stat"><strong>간편하게</strong><span>상담 요청 접수</span></div>
+        <div class="stat"><strong>한눈에</strong><span>경력과 전문 분야 확인</span></div>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="art-card">
+        <div class="art-top">
+          <div class="art-icon">📋</div>
+          <div class="art-check">✓</div>
+        </div>
+        <div class="art-title">인허가 준비, 차근차근</div>
+        <div class="art-sub">필요한 절차를 전문가와 함께 확인해요</div>
+        <div class="art-progress"><i></i></div>
+        <div class="art-caption">상황 파악부터 신청 준비까지</div>
+      </div>
+      <div class="floating-note">✦ 내 지역 전문가를 찾아보세요</div>
+    </div>
+  </section>
+
+  <main id="experts">
+    <div class="section-heading">
+      <div>
+        <h2>어떤 도움이 필요하세요?</h2>
+        <p>분야와 지역을 선택해 전문가를 찾아보세요.</p>
+      </div>
+    </div>
+
+    <section class="search-panel" aria-label="전문가 검색">
+      <label class="search-field">
+        <span aria-hidden="true">⌕</span>
+        <input id="keyword" type="search" placeholder="전문 분야, 전문가 이름으로 검색" aria-label="검색어" />
+      </label>
+      <label class="select-field">
+        <span aria-hidden="true">⌖</span>
+        <select id="region" aria-label="지역 선택">
+          <option value="">전체 지역</option>
+          <option>서울</option><option>경기</option><option>인천</option>
+          <option>부산</option><option>대전</option><option>전국</option>
+        </select>
+      </label>
+      <button class="primary-btn" id="searchBtn" type="button">전문가 찾기</button>
+    </section>
+
+    <div class="filters" aria-label="분야 필터">
+      <button class="filter-chip active" data-category="전체">전체</button>
+      <button class="filter-chip" data-category="건축·개발">건축·개발</button>
+      <button class="filter-chip" data-category="영업·사업">영업·사업</button>
+      <button class="filter-chip" data-category="환경·안전">환경·안전</button>
+      <button class="filter-chip" data-category="토지·입지">토지·입지</button>
+      <button class="filter-chip" data-category="행정·법률">행정·법률</button>
+    </div>
+
+    <div class="results-bar">
+      <div class="results-count">추천 전문가 <span id="resultCount">0</span>명</div>
+      <select class="sort-select" id="sort" aria-label="정렬 기준">
+        <option value="recommended">추천순</option>
+        <option value="rating">평점 높은 순</option>
+        <option value="experience">경력 많은 순</option>
+      </select>
+    </div>
+
+    <section class="expert-grid" id="expertGrid" aria-live="polite">
+      <div class="empty-state" id="emptyState">
+        <strong>검색 결과가 없습니다</strong>
+        검색어나 지역을 바꿔 다시 찾아보세요.
+      </div>
+    </section>
+
+    <section class="trust-strip" id="guide">
+      <div class="trust-item">
+        <strong>🔎 필요한 분야를 선택</strong>
+        <span>사업 유형과 지역에 맞춰 관련 분야의 전문가를 찾아보세요.</span>
+      </div>
+      <div class="trust-item">
+        <strong>💬 상담 내용 전달</strong>
+        <span>현재 상황과 궁금한 점을 남기면 상담 요청을 접수할 수 있어요.</span>
+      </div>
+      <div class="trust-item">
+        <strong>🤝 충분히 확인하고 결정</strong>
+        <span>전문가의 자격, 경력, 상담 범위와 비용을 확인한 뒤 진행하세요.</span>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    허가를 잇다 · 인허가 전문가 연결 서비스 데모<br />
+    화면에 표시된 전문가 정보는 예시이며 실제 인물·자격·서비스를 나타내지 않습니다.
+  </footer>
+
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h3 id="modalTitle">상담 문의</h3>
+          <p id="modalSubtitle">상담받고 싶은 내용을 남겨주세요.</p>
+        </div>
+        <button class="close-btn" type="button" aria-label="닫기" onclick="closeModal()">×</button>
+      </div>
+      <form id="contactForm">
+        <div class="form-field">
+          <label for="contactName">이름</label>
+          <input id="contactName" name="name" required placeholder="성함을 입력해주세요" />
+        </div>
+        <div class="form-field">
+          <label for="contactPhone">연락처</label>
+          <input id="contactPhone" name="phone" type="tel" required placeholder="010-0000-0000" />
+        </div>
+        <div class="form-field">
+          <label for="contactMessage">상담 내용</label>
+          <textarea id="contactMessage" name="message" required placeholder="필요한 인허가와 현재 상황을 알려주세요"></textarea>
+        </div>
+        <div class="form-success" id="formSuccess">
+          문의 내용이 입력되었습니다. 실제 서비스를 운영할 때는 이 폼을 서버나 이메일 발송 기능에 연결해주세요.
+        </div>
+        <button class="primary-btn modal-submit" type="submit">문의 내용 확인</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // 아래 정보는 UI 확인을 위한 예시 데이터입니다.
+    const experts = [
+      { name: "김도현", role: "건축 인허가 컨설턴트", category: "건축·개발", region: "서울", years: 12, rating: 4.9, reviews: 28, price: "상담 후 안내", bio: "상업시설·근린생활시설 건축 인허가 절차와 서류 검토를 지원합니다.", avatar: "김", color: "" },
+      { name: "박서연", role: "영업 인허가 행정사", category: "영업·사업", region: "경기", years: 9, rating: 4.8, reviews: 19, price: "상담 후 안내", bio: "음식점, 제조업 등 업종별 영업 신고와 등록 절차를 안내합니다.", avatar: "박", color: "violet" },
+      { name: "이준호", role: "환경·안전 인허가 전문가", category: "환경·안전", region: "인천", years: 15, rating: 5.0, reviews: 34, price: "상담 후 안내", bio: "환경 관련 신고 및 사업장 안전·시설 기준 검토를 도와드립니다.", avatar: "이", color: "yellow" },
+      { name: "최민지", role: "토지·개발행위 컨설턴트", category: "토지·입지", region: "부산", years: 11, rating: 4.7, reviews: 16, price: "상담 후 안내", bio: "개발행위허가, 용도지역 등 토지 이용 관련 사전 검토를 지원합니다.", avatar: "최", color: "blue" },
+      { name: "정우석", role: "행정·인허가 전문 행정사", category: "행정·법률", region: "대전", years: 8, rating: 4.8, reviews: 22, price: "상담 후 안내", bio: "행정 절차와 제출 서류를 살펴보고 진행 방향을 함께 정리합니다.", avatar: "정", color: "rose" },
+      { name: "한지수", role: "건축·사업 인허가 컨설턴트", category: "건축·개발", region: "전국", years: 10, rating: 4.9, reviews: 25, price: "상담 후 안내", bio: "사업 초기 단계에서 필요한 인허가 항목과 준비 순서를 안내합니다.", avatar: "한", color: "teal" }
+    ];
+
+    const grid = document.getElementById("expertGrid");
+    const emptyState = document.getElementById("emptyState");
+    let activeCategory = "전체";
+    let savedExperts = new Set();
+
+    function renderExperts() {
+      const keyword = document.getElementById("keyword").value.trim().toLowerCase();
+      const region = document.getElementById("region").value;
+      const sort = document.getElementById("sort").value;
+
+      let list = experts.filter((expert) => {
+        const matchesKeyword = !keyword ||
+          `${expert.name} ${expert.role} ${expert.category} ${expert.bio}`.toLowerCase().includes(keyword);
+        const matchesRegion = !region || expert.region === region || expert.region === "전국";
+        const matchesCategory = activeCategory === "전체" || expert.category === activeCategory;
+        return matchesKeyword && matchesRegion && matchesCategory;
+      });
+
+      if (sort === "rating") list.sort((a, b) => b.rating - a.rating);
+      if (sort === "experience") list.sort((a, b) => b.years - a.years);
+
+      document.getElementById("resultCount").textContent = list.length;
+      grid.querySelectorAll(".expert-card").forEach((card) => card.remove());
+      emptyState.style.display = list.length ? "none" : "block";
+
+      list.forEach((expert) => {
+        const card = document.createElement("article");
+        card.className = "expert-card";
+        card.innerHTML = `
+          <div class="card-top">
+            <div class="profile">
+              <div class="avatar ${expert.color}">${expert.avatar}</div>
+              <div>
+                <div class="name">${expert.name} 전문가</div>
+                <div class="role">${expert.role}</div>
+              </div>
+            </div>
+            <button class="bookmark ${savedExperts.has(expert.name) ? "saved" : ""}"
+              type="button" aria-label="관심 전문가 저장" aria-pressed="${savedExperts.has(expert.name)}"
+              data-save="${expert.name}">${savedExperts.has(expert.name) ? "♥" : "♡"}</button>
+          </div>
+          <div class="tags">
+            <span class="tag">${expert.category}</span>
+            <span class="tag">${expert.region}</span>
+          </div>
+          <p class="bio">${expert.bio}</p>
+          <div class="card-meta">
+            <span class="rating">★ ${expert.rating.toFixed(1)} <span style="color:#88948d;font-weight:400">(${expert.reviews})</span></span>
+            <span>경력 ${expert.years}년</span>
+          </div>
+          <div class="card-bottom">
+            <div class="price">상담 비용<strong>${expert.price}</strong></div>
+            <button class="detail-btn" type="button" data-contact="${expert.name}">상담 문의 →</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    document.querySelectorAll(".filter-chip").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.querySelector(".filter-chip.active")?.classList.remove("active");
+        button.classList.add("active");
+        activeCategory = button.dataset.category;
+        renderExperts();
+      });
+    });
+
+    document.getElementById("searchBtn").addEventListener("click", renderExperts);
+    document.getElementById("keyword").addEventListener("keydown", (event) => {
+      if (event.key === "Enter") renderExperts();
+    });
+    document.getElementById("region").addEventListener("change", renderExperts);
+    document.getElementById("sort").addEventListener("change", renderExperts);
+
+    grid.addEventListener("click", (event) => {
+      const saveButton = event.target.closest("[data-save]");
+      const contactButton = event.target.closest("[data-contact]");
+      if (saveButton) {
+        const name = saveButton.dataset.save;
+        savedExperts.has(name) ? savedExperts.delete(name) : savedExperts.add(name);
+        renderExperts();
+      }
+      if (contactButton) openModal(`${contactButton.dataset.contact} 전문가 상담`);
+    });
+
+    function openModal(title) {
+      document.getElementById("modalTitle").textContent = title;
+      document.getElementById("modalBackdrop").classList.add("open");
+      document.getElementById("formSuccess").style.display = "none";
+      document.querySelector(".modal-submit").style.display = "block";
+      document.body.style.overflow = "hidden";
+      document.getElementById("contactName").focus();
+    }
+
+    function closeModal() {
+      document.getElementById("modalBackdrop").classList.remove("open");
+      document.body.style.overflow = "";
+    }
+
+    document.getElementById("modalBackdrop").addEventListener("click", (event) => {
+      if (event.target.id === "modalBackdrop") closeModal();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeModal();
+    });
+
+    document.getElementById("contactForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      document.getElementById("formSuccess").style.display = "block";
+      document.querySelector(".modal-submit").style.display = "none";
+    });
+
+    renderExperts();
+  </script>
+</body>
+</html>
